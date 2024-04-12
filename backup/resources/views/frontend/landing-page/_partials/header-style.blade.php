@@ -1,0 +1,10 @@
+    <link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/remixicon.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/eduvibe-font.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/magnifypopup.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/slick.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/odometer.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/lightbox.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/animation.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/jqueru-ui-min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/landing/css/style.css') }}">
