@@ -2,12 +2,13 @@
 
 namespace App\CPU;
 
-use App\Model\Admin;
-use App\Models\BusinessSetting;
-
 use Carbon\Carbon;
-use Illuminate\Support\Facades\App;
+use App\Model\Admin;
+
+use App\Models\User;
+use App\Models\BusinessSetting;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 
 class Helpers
@@ -139,18 +140,18 @@ public static function get_user_by_token($request)
         $token = explode(' ', $request->header('authorization'));
         if (count($token) > 1 && strlen($token[1]) > 30) {
             
-            $user = DB::table('trading_sellers')->where('auth_token',$token[1])->first();
+            $user = User::where('auth_token',$token[1])->first();
             
-            if (isset($seller) && !empty($seller)) {
-                $data = $seller;
-                $success = 1;
+            if (isset($user) && !empty($user)) {
+                    
+                    $data = $user;
+                    $success = 1;
+
             }else{
-               $user =  DB::table('users')->where('auth_token',$token[1])->first();
-               if (isset($user) && !empty($user)){
-                   $data = $user;
-                   $success = 1;
-               }
-                
+               
+                   $data = [];
+                   $success = 0;
+              
             }
         }
 

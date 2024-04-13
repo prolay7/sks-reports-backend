@@ -4,6 +4,9 @@ namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\JsonResponse;
+use Exception;
 
 class Authenticate extends Middleware
 {
@@ -12,6 +15,12 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        return $request->expectsJson() ? null : route('login');
+        $response = [
+            'success'   => false,
+            'code'      => Response::HTTP_UNAUTHORIZED,
+            'data'      => [],
+            'message'   => 'Token is Required to access List of call register information',
+        ];
+        return $request->expectsJson() ? null : response()->json($response);
     }
 }

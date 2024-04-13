@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\api\BaseController;
+use App\Http\Controllers\Api\BaseController;
 use Exception;
 
 class AuthController extends BaseController
