@@ -197,7 +197,8 @@ class BookAppointmentController extends BaseController
                                             $book_appointment->appointment_date =date('Y-m-d',strtotime($request->appointment_date));
                                             $book_appointment->appointment_timing =$request->appointment_timing;
                                             $book_appointment->remarks =$request->remarks;
-                                            $book_appointment->agent_id = $authorization['success']['id'];
+                                            $book_appointment->agent_id = $authorization['data']['id'];
+                                            
                                             
                                             $book_appointment->save();
 
