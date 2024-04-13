@@ -40,13 +40,25 @@ class CallRegistersController extends BaseController
 
                 $data = CallRegister::where('agent_id','=',$authorization['data']['id'])->orderBy('id','desc')->get();
 
+                if($data){
 
-                $response = [
-                    'success' => true,
-                    'code'    => Response::HTTP_OK,
-                    'data'    => $data,
-                    'message' => 'You have successfully fetch Call Register Information',
-                ];
+                    $response = [
+                        'success' => true,
+                        'code'    => Response::HTTP_OK,
+                        'data'    => $data,
+                        'message' => 'You have successfully fetch Call Register Information',
+                    ];
+                }else{
+
+                    $response = [
+                        'success' => true,
+                        'code'    => Response::HTTP_OK,
+                        'data'    => $data,
+                        'message' => 'No information is available',
+                    ];
+
+                }
+                
 
 
             
