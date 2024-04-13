@@ -115,7 +115,7 @@ class CallRegistersController extends BaseController
                                 $call_register->contact_person_mobile =$request->contact_person_mobile;
                                 $call_register->contact_person_mobile2 =$request->contact_person_mobile2;
                                 $call_register->organization_address =$request->organization_address;
-                                $call_register->agent_id = auth()->user()->id;
+                                $call_register->agent_id = $authorization['data']-['id'];
                             
                                 $call_register->save();
 
