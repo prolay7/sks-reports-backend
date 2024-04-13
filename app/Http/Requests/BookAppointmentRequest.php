@@ -22,15 +22,14 @@ class BookAppointmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'organization_name' => 'required',
+            'institute_id' => 'required',
             'contact_person_name' => 'required',
             'contact_person_mobile' => 'required|numeric|digits:10',
             'organization_address' => 'required|regex:/([- ,\/0-9a-zA-Z]+)/',
             'appointment_date' => 'required',
             'appointment_timing'=>'required',
             'remarks'=>'required',
-            'agent_id' => 'required',
-            'visit_status' => 'required',
+            
         ];
     }
 }

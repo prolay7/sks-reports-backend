@@ -34,6 +34,7 @@ Route::group(['prefix' => 'call-register','middleware'=>'auth:api'], function ()
 /*Book Appointment Api For Relationship manager  */
 Route::group(['prefix' => 'book-appointment','middleware'=>'auth:api'], function () {
     Route::get('/institute-list',[BookAppointmentController::class, 'getInstituteList']);
+    Route::get('/get-details-institute-information/{instId}',[BookAppointmentController::class, 'getDetailsInstituteInformation']);
     Route::get('/list',[BookAppointmentController::class, 'onLoadBookAppointments']);
     Route::post('/add',[BookAppointmentController::class, 'storeBookAppointments']);
 
