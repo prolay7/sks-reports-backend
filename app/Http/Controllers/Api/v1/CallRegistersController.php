@@ -40,7 +40,7 @@ class CallRegistersController extends BaseController
 
                 $data = CallRegister::where('agent_id','=',$authorization['data']['id'])->orderBy('id','desc')->get();
 
-                if($data){
+                if(count($data)>0){
 
                     $response = [
                         'success' => true,
