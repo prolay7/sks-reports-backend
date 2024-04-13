@@ -101,26 +101,41 @@ class CallRegistersController extends BaseController
 
             if ($authorization['success'] == 1) {
 
-                       
-                         
-                            $call_register = CallRegister::firstOrNew(array('organization_name' => $request->organization_name,'contact_person_name'=>$request->contact_person_name,'contact_person_mobile'=>$request->contact_person_mobile,'organization_address'=>$request->organization_address));
+                            //check data exist or not 
+
+                            $Call_register_exist = CallRegister::where(['organization_name' => $request->organization_name,'contact_person_name'=>$request->contact_person_name,'contact_person_mobile'=>$request->contact_person_mobile,'organization_address'=>$request->organization_address])->first();
+                            if(empty($Call_register_exist)){
+                            
+                            
+                                $call_register = CallRegister::firstOrNew(array('organization_name' => $request->organization_name,'contact_person_name'=>$request->contact_person_name,'contact_person_mobile'=>$request->contact_person_mobile,'organization_address'=>$request->organization_address));
                         
 
-                            $call_register->organization_name =$request->organization_name;
-                            $call_register->contact_person_name =$request->contact_person_name;
-                            $call_register->contact_person_mobile =$request->contact_person_mobile;
-                            $call_register->contact_person_mobile2 =$request->contact_person_mobile2;
-                            $call_register->organization_address =$request->organization_address;
-                            $call_register->agent_id = auth()->user()->id;
-                        
-                            $call_register->save();
+                                $call_register->organization_name =$request->organization_name;
+                                $call_register->contact_person_name =$request->contact_person_name;
+                                $call_register->contact_person_mobile =$request->contact_person_mobile;
+                                $call_register->contact_person_mobile2 =$request->contact_person_mobile2;
+                                $call_register->organization_address =$request->organization_address;
+                                $call_register->agent_id = auth()->user()->id;
+                            
+                                $call_register->save();
+
+                                $response = [
+                                    'success' => true,
+                                    'code'    => Response::HTTP_OK,
+                                    'data'    => $call_register,
+                                    'message' => 'You have successfully created Call Register Information',
+                                ];
+
+                        }else{
 
                             $response = [
-                                'success' => true,
+                                'success' => false,
                                 'code'    => Response::HTTP_OK,
-                                'data'    => $call_register,
-                                'message' => 'You have successfully created Call Register Information',
+                                'data'    => [],
+                                'message' => 'This Call Register Information is already exist',
                             ];
+
+                        }
 
                         
                            
