@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Http\Requests\CallRegisterRequest;
 use Exception;
 use Validator;
 use LogActivity;
@@ -30,18 +31,7 @@ class CallRegistersController extends BaseController
         $data   =   [];
 
         try{
-            if(empty($request->header('authorization'))){
-
-                $response = [
-                    'success'   => false,
-                    'code'      => Response::HTTP_UNAUTHORIZED,
-                    'data'      => $data,
-                    'message'   => 'Token is Required to access List of call register information',
-                ];
-
-                return $this->sendResponse($response);
-
-            }
+            
 
             //authorized For access using Token
             $authorization = Helpers::get_user_by_token($request);
@@ -86,63 +76,42 @@ class CallRegistersController extends BaseController
 
     }
 
-    public function storeCallRegister(Request $request)
+    public function storeCallRegister(CallRegisterRequest $request)
     {
         $data   =   [];
 
         try{
 
-            if(empty($request->header('authorization'))){
-
-                $response = [
-                    'success'   => false,
-                    'code'      => Response::HTTP_UNAUTHORIZED,
-                    'data'      => $data,
-                    'message'   => 'Token is Required to access List of call register information',
-                ];
-
-                return $this->sendResponse($response);
-
-            }
+            
 
             //authorized For access using Token
             $authorization = Helpers::get_user_by_token($request);
 
             if ($authorization['success'] == 1) {
 
-                        $request->validate([
-                            'organization_name' => 'required|min:5',
-                            'contact_person_name' => 'required|regex:/^[\pL\s]+$/u|min:3',
-                            'contact_person_mobile' => 'required|numeric|digits:10',
-                            'organization_address' => 'required',
-                        ]);
-                    
-                        
-                
-                        
-                
+                       
+                         
                             $call_register = CallRegister::firstOrNew(array('organization_name' => $request->organization_name,'contact_person_name'=>$request->contact_person_name,'contact_person_mobile'=>$request->contact_person_mobile,'organization_address'=>$request->organization_address));
-                            
-                
+                        
+
                             $call_register->organization_name =$request->organization_name;
                             $call_register->contact_person_name =$request->contact_person_name;
                             $call_register->contact_person_mobile =$request->contact_person_mobile;
                             $call_register->contact_person_mobile2 =$request->contact_person_mobile2;
                             $call_register->organization_address =$request->organization_address;
-                            $call_register->agent_id = $data['data']['id'];
-
+                            $call_register->agent_id = auth()->user()->id;
+                        
                             $call_register->save();
 
+                            $response = [
+                                'success' => true,
+                                'code'    => Response::HTTP_OK,
+                                'data'    => $call_register,
+                                'message' => 'You have successfully created Call Register Information',
+                            ];
 
-
-
-                        $response = [
-                            'success' => true,
-                            'code'    => Response::HTTP_OK,
-                            'data'    => $call_register,
-                            'message' => 'You have successfully created Call Register Information',
-                        ];
-
+                        
+                           
 
             
             }else{

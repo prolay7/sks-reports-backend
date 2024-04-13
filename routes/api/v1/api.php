@@ -25,7 +25,7 @@ Route::post('applogin', [AuthController::class, 'onLogin']);
 Route::group(['prefix' => 'call-register','middleware'=>'auth:api'], function () {
 
     Route::get('/list',[CallRegistersController::class, 'onLoadCallRegisters']);
-    Route::get('/add',[CallRegistersController::class, 'storeCallRegister']);
+    Route::post('/add',[CallRegistersController::class, 'storeCallRegister']);
 
 
 });

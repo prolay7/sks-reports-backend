@@ -139,7 +139,7 @@ class CallRegisterController extends Controller
             $call_register->organization_address =$request->organization_address;
             $call_register->agent_id = auth()->user()->id;
         
-        $call_register->save();
+            $call_register->save();
         
          \LogActivity::addToLog('successfully submitted Call Register.Data inserted-'.json_encode($call_register));
 
