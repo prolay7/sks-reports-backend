@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\Api\v1\CallRegistersController;
+use App\Http\Controllers\backend\CallRegisterController;
 
 
 /*
@@ -19,11 +20,12 @@ use App\Http\Controllers\Api\v1\CallRegistersController;
 */
 
 
-Route::prefix('/')->controller(AuthController::class)->group(function () {
-   Route::post('/applogin','onLogin');
-});
+Route::post('applogin', [AuthController::class, 'onLogin']);
+
+Route::group(['prefix' => 'call-register','middleware'=>'auth:api'], function () {
+
+    Route::get('/list',[CallRegisterController::class, 'index']);
+    Route::get('/add',[CallRegisterController::class, 'store']);
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
 });

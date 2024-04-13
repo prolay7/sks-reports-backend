@@ -36,17 +36,50 @@ class RouteServiceProvider extends ServiceProvider
     //  }
     public function boot(): void
     {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
+        //parent::boot();
+        // RateLimiter::for('api', function (Request $request) {
+        //     return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        // });
 
         $this->routes(function () {
             Route::middleware('api')
-                ->prefix('api')
-                ->group(base_path('routes/api.php'));
-
+                ->prefix('api/v1') 
+                ->group(base_path('routes/api/v1/api.php'));
+ 
+            // For future v2 integration:
+            Route::middleware('api')
+                ->prefix('api/v2')
+                ->group(base_path('routes/api/v1/api.php'));
+ 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });
+
+
+
+       
+    }
+
+    protected function mapApiv1Routes()
+    {
+        Route::prefix('api')
+            ->middleware('api')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/api/v1/api.php'));
+    }
+
+    protected function mapApiv2Routes()
+    {
+        Route::prefix('api')
+            ->middleware('api')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/api/v2/api.php'));
+    }
+
+    protected function mapWebRoutes()
+    {
+        Route::middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/web.php'));
     }
 }

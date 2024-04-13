@@ -47,7 +47,9 @@ class AuthController extends BaseController
                         // Generate token
                         $tokenResult = $user->createToken('SksSalesApp');
                         $token = $tokenResult->accessToken;  // Correct way to retrieve the token
-
+                        //store token to db for Authorization
+                        $user->auth_token = $token;
+                        $user->save(); //Update token to User Table
                         $data['token'] = $token;
                         $data['user'] = array(
                             "id"=>$user->id,

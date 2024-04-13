@@ -131,6 +131,35 @@ class Helpers
    }
 }
 
+public static function get_user_by_token($request)
+    {
+        $data = '';
+        $success = 0;
+
+        $token = explode(' ', $request->header('authorization'));
+        if (count($token) > 1 && strlen($token[1]) > 30) {
+            
+            $user = DB::table('trading_sellers')->where('auth_token',$token[1])->first();
+            
+            if (isset($seller) && !empty($seller)) {
+                $data = $seller;
+                $success = 1;
+            }else{
+               $user =  DB::table('users')->where('auth_token',$token[1])->first();
+               if (isset($user) && !empty($user)){
+                   $data = $user;
+                   $success = 1;
+               }
+                
+            }
+        }
+
+        return [
+            'success' => $success,
+            'data' => $data
+        ];
+    }
+
 }
 
 
