@@ -30,7 +30,7 @@
     },
     "autoload": {
         "files": [
-            "app/CPU/helpers.php",
+            "app/CPU/Helpers.php",
             "app/CPU/image-manager.php"
             
         ],
