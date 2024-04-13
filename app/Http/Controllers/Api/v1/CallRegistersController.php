@@ -103,7 +103,7 @@ class CallRegistersController extends BaseController
 
                             //check data exist or not 
 
-                            $Call_register_exist = CallRegister::where(['organization_name' => $request->organization_name,'contact_person_name'=>$request->contact_person_name,'contact_person_mobile'=>$request->contact_person_mobile,'organization_address'=>$request->organization_address])->first();
+                            $Call_register_exist = CallRegister::where(['organization_name' => $request->organization_name,'organization_address'=>$request->organization_address])->first();
                             if(empty($Call_register_exist)){
                             
                             
@@ -132,7 +132,7 @@ class CallRegistersController extends BaseController
                                 'success' => false,
                                 'code'    => Response::HTTP_OK,
                                 'data'    => [],
-                                'message' => 'This Call Register Information is already exist',
+                                'message' => 'Organization name and Organization address is already exist',
                             ];
 
                         }
