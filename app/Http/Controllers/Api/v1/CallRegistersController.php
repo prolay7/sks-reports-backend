@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-<<<<<<< HEAD
-=======
+
 use App\Http\Requests\CallRegisterRequest;
->>>>>>> 431b53ce6694c7d1867556dbf2a3201143eb35a8
+
 use Exception;
 use Validator;
 use LogActivity;
@@ -34,22 +33,6 @@ class CallRegistersController extends BaseController
         $data   =   [];
 
         try{
-<<<<<<< HEAD
-            if(empty($request->header('authorization'))){
-
-                $response = [
-                    'success'   => false,
-                    'code'      => Response::HTTP_UNAUTHORIZED,
-                    'data'      => $data,
-                    'message'   => 'Token is Required to access List of call register information',
-                ];
-
-                return $this->sendResponse($response);
-
-            }
-=======
-            
->>>>>>> 431b53ce6694c7d1867556dbf2a3201143eb35a8
 
             //authorized For access using Token
             $authorization = Helpers::get_user_by_token($request);
@@ -58,7 +41,7 @@ class CallRegistersController extends BaseController
 
                 $data = CallRegister::where('agent_id','=',$authorization['data']['id'])->orderBy('id','desc')->get();
 
-<<<<<<< HEAD
+
 
                 $response = [
                     'success' => true,
@@ -66,7 +49,7 @@ class CallRegistersController extends BaseController
                     'data'    => $data,
                     'message' => 'You have successfully fetch Call Register Information',
                 ];
-=======
+
                 if(count($data)>0){
 
                     $response = [
@@ -86,7 +69,7 @@ class CallRegistersController extends BaseController
 
                 }
                 
->>>>>>> 431b53ce6694c7d1867556dbf2a3201143eb35a8
+
 
 
             
@@ -116,11 +99,9 @@ class CallRegistersController extends BaseController
 
     }
 
-<<<<<<< HEAD
-    public function storeCallRegister(Request $request)
-=======
+
     public function storeCallRegister(CallRegisterRequest $request)
->>>>>>> 431b53ce6694c7d1867556dbf2a3201143eb35a8
+
     {
         $data   =   [];
 

@@ -39,3 +39,13 @@ Route::group(['prefix' => 'book-appointment','middleware'=>'auth:api'], function
     Route::post('/add',[BookAppointmentController::class, 'storeBookAppointments']);
 
 });
+
+
+/*Visit Register Api For Relationship manager  */
+Route::group(['prefix' => 'visit-register','middleware'=>'auth:api'], function () {
+    Route::get('/institute-list',[BookAppointmentController::class, 'getInstituteList']);
+    Route::get('/get-details-institute-information/{instId}',[BookAppointmentController::class, 'getDetailsInstituteInformation']);
+    Route::get('/list',[BookAppointmentController::class, 'onLoadBookAppointments']);
+    Route::post('/add',[BookAppointmentController::class, 'storeBookAppointments']);
+
+});
