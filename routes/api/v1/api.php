@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\v1\BookAppointmentController;
 use App\Http\Controllers\Api\v1\ConfigController;
+use App\Http\Controllers\Api\v1\VisitRegisterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,7 +55,7 @@ Route::group(['prefix' => 'book-appointment','middleware'=>'auth:api'], function
 
 /*Visit Register Api For Relationship manager  */
 Route::group(['prefix' => 'visit-register','middleware'=>'auth:api'], function () {
-    Route::get('/list',[BookAppointmentController::class, 'onLoadVisitRegister']);
-    Route::post('/add',[BookAppointmentController::class, 'storeVisitRegister']);
+    Route::get('/list',[VisitRegisterController::class, 'onLoadVisitRegister']);
+    Route::post('/add',[VisitRegisterController::class, 'storeVisitRegister']);
 
 });

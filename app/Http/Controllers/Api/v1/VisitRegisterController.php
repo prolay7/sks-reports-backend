@@ -16,7 +16,7 @@ class VisitRegisterController extends BaseController
 {
     
 
-    public function onLoadVisitRegister(VisitRegisterRequest $request){
+    public function onLoadVisitRegister(Request $request){
 
         
         $data   =   [];
