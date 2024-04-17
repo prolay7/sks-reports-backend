@@ -24,6 +24,8 @@ use App\Http\Controllers\Api\v1\CallRegistersController;
 
 Route::post('applogin', [AuthController::class, 'onLogin']);
 
+
+Route::get('/getVisitRegisterStatus',['middleware'=>'auth:api', ConfigController::class, 'getVisitRegisterStatus']);
 Route::get('/getStateList',['middleware'=>'auth:api', ConfigController::class, 'getStateList']);
 Route::get('/getDistrictList/{stateName}',['middleware'=>'auth:api', ConfigController::class, 'getDistrictList']);
 
@@ -47,9 +49,7 @@ Route::group(['prefix' => 'book-appointment','middleware'=>'auth:api'], function
 
 /*Visit Register Api For Relationship manager  */
 Route::group(['prefix' => 'visit-register','middleware'=>'auth:api'], function () {
-    Route::get('/state-list',[BookAppointmentController::class, 'getInstituteList']);
-    Route::get('/get-details-institute-information/{instId}',[BookAppointmentController::class, 'getDetailsInstituteInformation']);
-    Route::get('/list',[BookAppointmentController::class, 'onLoadBookAppointments']);
-    Route::post('/add',[BookAppointmentController::class, 'storeBookAppointments']);
+    Route::get('/list',[BookAppointmentController::class, 'onLoadVisitRegister']);
+    Route::post('/add',[BookAppointmentController::class, 'storeVisitRegister']);
 
 });

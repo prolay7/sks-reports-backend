@@ -91,7 +91,7 @@ class ConfigController extends BaseController
             $authorization = Helpers::get_user_by_token($request);
 
             if ($authorization['success'] == 1) {
-
+                //$stateName = DB::table('districts')->where('id', $stateId)->first();
                 $data =  DB::table('districts')->where('State',$stateName)->orderBy('District','ASC')->get();               
 
                 if(count($data)>0){
@@ -144,4 +144,30 @@ class ConfigController extends BaseController
 
 
     }
+
+    public function getVisitRegisterStatus(Request $request){
+
+        $data = array(
+            'Positive Meeting','Very Interested','Interested But Not Sure','Asked to Visit Again','Not Interested','Next Follow up',
+            'Long Time Ph not Received',
+            'Appointment Booked',
+            'Visited',
+            'Re-Visit'
+        );
+        $response = [
+            'success' => true,
+            'code'    => Response::HTTP_OK,
+            'data'    => $data,
+            'message' => 'No information is available',
+        ];
+
+
+        return $this->sendResponse($response);
+
+
+
+
+    }
+
 }
+
