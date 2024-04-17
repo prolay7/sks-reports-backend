@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\BookAppointmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,10 +23,19 @@ use App\Http\Controllers\Api\v1\CallRegistersController;
 
 Route::post('applogin', [AuthController::class, 'onLogin']);
 
+/*Call Register Api For Relationship manager  */
 Route::group(['prefix' => 'call-register','middleware'=>'auth:api'], function () {
 
-    Route::get('/list',[CallRegistersController::class, 'onLoadCallRegisters']);
-    Route::get('/add',[CallRegistersController::class, 'storeCallRegister']);
+    Route::get('/list',[CallRegisterController::class, 'index']);
+    Route::get('/add',[CallRegisterController::class, 'store']);
 
+});
+
+/*Book Appointment Api For Relationship manager  */
+Route::group(['prefix' => 'book-appointment','middleware'=>'auth:api'], function () {
+    Route::get('/institute-list',[BookAppointmentController::class, 'getInstituteList']);
+    Route::get('/get-details-institute-information/{instId}',[BookAppointmentController::class, 'getDetailsInstituteInformation']);
+    Route::get('/list',[BookAppointmentController::class, 'onLoadBookAppointments']);
+    Route::post('/add',[BookAppointmentController::class, 'storeBookAppointments']);
 
 });

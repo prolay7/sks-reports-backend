@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+<<<<<<< HEAD
+=======
+use App\Http\Requests\CallRegisterRequest;
+>>>>>>> 431b53ce6694c7d1867556dbf2a3201143eb35a8
 use Exception;
 use Validator;
 use LogActivity;
@@ -30,6 +34,7 @@ class CallRegistersController extends BaseController
         $data   =   [];
 
         try{
+<<<<<<< HEAD
             if(empty($request->header('authorization'))){
 
                 $response = [
@@ -42,6 +47,9 @@ class CallRegistersController extends BaseController
                 return $this->sendResponse($response);
 
             }
+=======
+            
+>>>>>>> 431b53ce6694c7d1867556dbf2a3201143eb35a8
 
             //authorized For access using Token
             $authorization = Helpers::get_user_by_token($request);
@@ -50,6 +58,7 @@ class CallRegistersController extends BaseController
 
                 $data = CallRegister::where('agent_id','=',$authorization['data']['id'])->orderBy('id','desc')->get();
 
+<<<<<<< HEAD
 
                 $response = [
                     'success' => true,
@@ -57,6 +66,27 @@ class CallRegistersController extends BaseController
                     'data'    => $data,
                     'message' => 'You have successfully fetch Call Register Information',
                 ];
+=======
+                if(count($data)>0){
+
+                    $response = [
+                        'success' => true,
+                        'code'    => Response::HTTP_OK,
+                        'data'    => $data,
+                        'message' => 'You have successfully fetch Call Register Information',
+                    ];
+                }else{
+
+                    $response = [
+                        'success' => true,
+                        'code'    => Response::HTTP_OK,
+                        'data'    => $data,
+                        'message' => 'No information is available',
+                    ];
+
+                }
+                
+>>>>>>> 431b53ce6694c7d1867556dbf2a3201143eb35a8
 
 
             
@@ -86,7 +116,11 @@ class CallRegistersController extends BaseController
 
     }
 
+<<<<<<< HEAD
     public function storeCallRegister(Request $request)
+=======
+    public function storeCallRegister(CallRegisterRequest $request)
+>>>>>>> 431b53ce6694c7d1867556dbf2a3201143eb35a8
     {
         $data   =   [];
 
@@ -143,6 +177,64 @@ class CallRegistersController extends BaseController
                             'message' => 'You have successfully created Call Register Information',
                         ];
 
+
+            
+            }else{
+
+
+                $response = [
+                    'success'   => false,
+                    'code'      => Response::HTTP_UNAUTHORIZED,
+                    'data'      => $data,
+                    'message'   => 'Your existing session token does not authorize you any more',
+                ];
+
+
+            }            
+
+            //authorized For access using Token
+            $authorization = Helpers::get_user_by_token($request);
+
+            if ($authorization['success'] == 1) {
+
+                            //check data exist or not 
+
+                            $Call_register_exist = CallRegister::where(['organization_name' => $request->organization_name,'organization_address'=>$request->organization_address])->first();
+                            if(empty($Call_register_exist)){
+                            
+                            
+                                $call_register = CallRegister::firstOrNew(array('organization_name' => $request->organization_name,'contact_person_name'=>$request->contact_person_name,'contact_person_mobile'=>$request->contact_person_mobile,'organization_address'=>$request->organization_address));
+                        
+
+                                $call_register->organization_name =$request->organization_name;
+                                $call_register->contact_person_name =$request->contact_person_name;
+                                $call_register->contact_person_mobile =$request->contact_person_mobile;
+                                $call_register->contact_person_mobile2 =$request->contact_person_mobile2;
+                                $call_register->organization_address =$request->organization_address;
+                                $call_register->agent_id = $authorization['data']-['id'];
+                            
+                                $call_register->save();
+
+                                $response = [
+                                    'success' => true,
+                                    'code'    => Response::HTTP_OK,
+                                    'data'    => $call_register,
+                                    'message' => 'You have successfully created Call Register Information',
+                                ];
+
+                        }else{
+
+                            $response = [
+                                'success' => false,
+                                'code'    => Response::HTTP_OK,
+                                'data'    => [],
+                                'message' => 'Organization name and Organization address is already exist',
+                            ];
+
+                        }
+
+                        
+                           
 
             
             }else{
