@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\v1\CallRegistersController;
 Route::post('applogin', [AuthController::class, 'onLogin']);
 
 Route::get('/getStateList',['middleware'=>'auth:api', ConfigController::class, 'getStateList']);
+Route::get('/getDistrictList/{stateName}',['middleware'=>'auth:api', ConfigController::class, 'getDistrictList']);
 
 /*Call Register Api For Relationship manager  */
 Route::group(['prefix' => 'call-register','middleware'=>'auth:api'], function () {
