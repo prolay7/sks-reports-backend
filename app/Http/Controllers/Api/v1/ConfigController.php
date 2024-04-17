@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use Exception;
 use App\CPU\Helpers ;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\Api\BaseController;
 use Symfony\Component\HttpFoundation\Response;
 
 
-class ConfigController extends Controller
+class ConfigController extends BaseController
 {
     
     public function getStateList(Request $request){
