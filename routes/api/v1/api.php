@@ -26,6 +26,7 @@ Route::post('applogin', [AuthController::class, 'onLogin']);
 
 
 Route::get('/getVisitRegisterStatus',['middleware'=>'auth:api', ConfigController::class, 'getVisitRegisterStatus']);
+Route::get('/getCallRegisterFollowUpStatus',['middleware'=>'auth:api', ConfigController::class, 'getCallRegisterFollowUpStatus']);
 Route::get('/getStateList',['middleware'=>'auth:api', ConfigController::class, 'getStateList']);
 Route::get('/getDistrictList/{stateName}',['middleware'=>'auth:api', ConfigController::class, 'getDistrictList']);
 
@@ -34,6 +35,8 @@ Route::group(['prefix' => 'call-register','middleware'=>'auth:api'], function ()
 
     Route::get('/list',[CallRegistersController::class, 'index']);
     Route::get('/add',[CallRegistersController::class, 'store']);
+
+    Route::post('/addFollowUp',[CallRegistersController::class, 'storeAddRemarks']);
 
 });
 

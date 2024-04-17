@@ -158,7 +158,37 @@ class ConfigController extends BaseController
             'success' => true,
             'code'    => Response::HTTP_OK,
             'data'    => $data,
-            'message' => 'No information is available',
+            'message' => 'Visit Register Status information fetch successfully',
+        ];
+
+
+        return $this->sendResponse($response);
+
+
+
+
+    }
+
+    public function getCallRegisterFollowUpStatus(Request $request){
+
+        $data = array(
+            'Appointment Registered',
+            'Positive Meeting',
+            'Very Interested',
+            'Appointment Registered',
+            'Asked to Visit Again',
+            'Not Interested',
+            'Next Followup',
+            'Long time Ph. not Received',
+            'Appointment Booked',
+            'Visited',
+            'Re-Visit'
+        );
+        $response = [
+            'success' => true,
+            'code'    => Response::HTTP_OK,
+            'data'    => $data,
+            'message' => 'Call Register Followup Status List Fetch Successfully',
         ];
 
 
