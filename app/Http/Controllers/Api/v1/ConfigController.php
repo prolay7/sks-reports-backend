@@ -26,11 +26,7 @@ class ConfigController extends BaseController
 
             if ($authorization['success'] == 1) {
 
-                $data =  DB::table('district')->orderBy('State','ASC')->get()->unique('State');
-
-
-
-                
+                $data =  DB::table('districts')->orderBy('State','ASC')->get()->unique('State');               
 
                 if(count($data)>0){
 
