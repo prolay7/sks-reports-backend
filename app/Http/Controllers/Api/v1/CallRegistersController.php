@@ -239,4 +239,75 @@ class CallRegistersController extends BaseController
 
 
     }
+
+
+    public function getDetailsCallRegister(Request $request, $callRegisterId ){
+
+        $data   =   [];
+
+        try{
+
+            //authorized For access using Token
+            $authorization = Helpers::get_user_by_token($request);
+
+            if ($authorization['success'] == 1) {
+
+                $data = CallRegister::where('agent_id','=',$authorization['data']['id'])->where('id',$callRegisterId)->get();
+
+
+
+                
+                if(count($data)>0){
+
+                    //get folowups 
+
+                    $followups = FollowUp::where('call_register_id',$callRegisterId)->get();
+
+                    $response = [
+                        'success' => true,
+                        'code'    => Response::HTTP_OK,
+                        'data'    => ['call_register'=>$data,'follow_ups'=>$followups],
+                        'message' => 'You have successfully fetch Call Register Information',
+                    ];
+                }else{
+
+                    $response = [
+                        'success' => true,
+                        'code'    => Response::HTTP_OK,
+                        'data'    => $data,
+                        'message' => 'No information is available',
+                    ];
+
+                }
+                
+
+
+
+            
+            }else{
+
+
+                $response = [
+                    'success'   => false,
+                    'code'      => Response::HTTP_UNAUTHORIZED,
+                    'data'      => $data,
+                    'message'   => 'Your existing session token does not authorize you any more',
+                ];
+
+
+            }            
+
+        } catch (\Exception $e) {
+            $response = [
+                'success'   => false,
+                'code'      => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'data'      => $data,
+                'message'   => $e->getMessage(),
+            ];
+        }
+
+        return $this->sendResponse($response);
+
+    
+    }
 }

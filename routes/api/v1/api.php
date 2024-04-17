@@ -38,6 +38,8 @@ Route::group(['prefix' => 'call-register','middleware'=>'auth:api'], function ()
 
     Route::post('/addFollowUp',[CallRegistersController::class, 'storeAddRemarks']);
 
+    Route::get('/getDetailsCallRegister/{callRegisterId}',[CallRegistersController::class, 'getDetailsCallRegister']);
+
 });
 
 /*Book Appointment Api For Relationship manager  */
