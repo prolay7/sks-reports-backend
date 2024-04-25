@@ -52,6 +52,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
 
     Route::post('/generate-proposal', [ProposalController::class, 'generatePdf'])->name('proposal.generatepdf');
 
+    Route::post('/generate-bills', [ProposalController::class, 'generateBillPdf'])->name('bills.generatepdf');
+
     Route::post('/get-payment_option', [ProposalController::class, 'getPaymentOption'])->name('get-payment_option');
 
     Route::post('/get-product-cost', [ProposalController::class, 'getProductCost'])->name('get-product-cost');
@@ -129,6 +131,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
 
         Route::post('/send-proposal', [ProposalController::class, 'sendProposal'])->name('send-proposal');
 
+        Route::post('/send-complete-deal', [ProposalController::class, 'sendCompleteDeal'])->name('send-complete-deal');
 
 
     });

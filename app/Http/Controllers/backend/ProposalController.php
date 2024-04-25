@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\backend;
 
+use App\Mail\CompleteDealSenderEmail;
 use App\Mail\ProposalEmailSender;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -379,12 +380,12 @@ class ProposalController extends Controller
 
         // Set paper size and orientation for the PDF
         $dompdf->setPaper('A3', 'portrait'); // Adjust paper size and orientation as needed
-//A3: 'A3' - 297 x 420 mm or 11.7 x 16.5 inches
-//A4: 'A4' - 210 x 297 mm or 8.3 x 11.7 inches
-//A5: 'A5' - 148 x 210 mm or 5.8 x 8.3 inches
-//Letter: 'letter' or '8.5x11' - 8.5 x 11 inches
-//Legal: 'legal' or '8.5x14' - 8.5 x 14 inches
-//Tabloid: 'tabloid' or '11x17' - 11 x 17 inches
+        //A3: 'A3' - 297 x 420 mm or 11.7 x 16.5 inches
+        //A4: 'A4' - 210 x 297 mm or 8.3 x 11.7 inches
+        //A5: 'A5' - 148 x 210 mm or 5.8 x 8.3 inches
+        //Letter: 'letter' or '8.5x11' - 8.5 x 11 inches
+        //Legal: 'legal' or '8.5x14' - 8.5 x 14 inches
+        //Tabloid: 'tabloid' or '11x17' - 11 x 17 inches
 
         // (Optional) Set options if needed
         $options = new Options();
@@ -434,7 +435,7 @@ class ProposalController extends Controller
             //return response()->json(['success' => $response_flag,'error'=> $error]);
 
 
-            $proposal = Proposals::firstOrNew(array('product_id' => $request->intsid,'payment_id'=>$request->payment_option,'product_total_cost'=>$request->product_total_cost));
+            $proposal = Proposals::firstOrNew(array('institute_id'=>$request->intsid));
 
             $proposal->institute_id= $request->intsid;
             $proposal->contact_person= $request->contact_person;
@@ -529,5 +530,246 @@ class ProposalController extends Controller
         if(trim($result[0]) != "") echo $result[0] . "Rupees ";
         if($result[1] != "") echo $result[1] . "Paise";
         echo " Only";
+    }
+
+
+    public function sendCompleteDeal(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'pay_amount' => 'required',
+            'payment_date' => 'required',
+            'payment_mode' => 'required',
+            'transaction_no'=>'required',
+            'subject' => 'required',
+            'email_message'=>'required',
+            'email_cc'=>'required'
+            
+             ]);
+            
+            if ($validator->fails())
+            {
+                \LogActivity::addToLog('Validation Error occurred.'.json_encode($validator));
+                return Redirect::back()->withInput()->withErrors($validator);
+            }
+            
+            
+            //generate pdf 
+
+            $dompdf = new Dompdf();
+
+            $proposal_id = $request->proposal_id;
+
+            //get institute name = 
+
+            $instid  =DB::table('proposals')->where('id',$proposal_id)->first() ;
+
+            $instname = DB::table('call_registers')->where('id',$instid->institute_id)->first();
+
+
+            $data['institute_name'] = $instname->organization_name;
+            $data['amout_paid'] = $request->pay_amount;
+            $data['amount_paid_text'] = Helpers::convert_number_to_words($request->pay_amount);
+            $data['tranaction_date'] = date('d.m.Y',strtotime($request->payment_date));
+            $data['transaction_no'] = str_replace(" ","-",$request->payment_mode)."-".$request->transaction_no ;
+            $data['Reg_txt'] = $request->subject;
+            $data['amnttct'] = $request->pay_amount;
+            $data['inv_no']= date('My')."/000".$proposal_id;
+
+
+
+        //exit;
+        // Get HTML content from Blade views for each page
+        $page1 = View::make('backend.bills.page1', $data)->render();
+       
+        // Combine HTML content of all pages
+        $html = "<html><body>{$page1}</body></html>";
+        //$html = "<html><body>{$page5}</body></html>";
+        // Load combined HTML content into Dompdf
+        $dompdf->loadHtml($html);
+
+        // Set paper size and orientation for the PDF
+        $dompdf->setPaper('A3', 'portrait'); // Adjust paper size and orientation as needed
+        //A3: 'A3' - 297 x 420 mm or 11.7 x 16.5 inches
+        //A4: 'A4' - 210 x 297 mm or 8.3 x 11.7 inches
+        //A5: 'A5' - 148 x 210 mm or 5.8 x 8.3 inches
+        //Letter: 'letter' or '8.5x11' - 8.5 x 11 inches
+        //Legal: 'legal' or '8.5x14' - 8.5 x 14 inches
+        //Tabloid: 'tabloid' or '11x17' - 11 x 17 inches
+
+        // (Optional) Set options if needed
+        $options = new Options();
+      $options->set('isRemoteEnabled', true);
+	   $options->set('isHtml5ParserEnabled', true);
+        $dompdf->setOptions($options);
+
+        // Render the PDF
+        $dompdf->render();
+
+        // Get the generated PDF content
+        $pdfContent = $dompdf->output();
+
+        // Return the PDF content in the response with appropriate headers
+
+        $proposal_file_name = strtoupper($data['institute_name'])."-".date('M-Y')."-BILL-CREATED-BY-".auth()->user()->name.date('d-m-Y').".pdf";
+
+        $linkk = Storage::put("public/bills/".$proposal_file_name,$pdfContent);
+        //$filename =Storage::files('public/proposal/multi_page_pdf.pdf');
+        if($linkk == true){
+
+            
+            $pdflink = env('APP_URL').'/storage/app/public/bills/'.$proposal_file_name;
+        
+            $imagepathlink = "storage/app/public/bills/".$proposal_file_name;
+
+
+            $response_flag = 0;
+            $error='';
+            try {
+                $emailServices_smtp = Helpers::get_business_settings('mail_config');
+
+                $emailexx = explode(",",$request->email_cc);
+
+                array_push($emailexx,auth()->user()->email);
+                
+                if ($emailServices_smtp['status'] == 1) {
+                    Mail::to($request->email_address)
+                    ->cc($emailexx)
+                    ->bcc(array('info@sikshapedia.com','pankaj.ssconline@gmail.com'))
+                    ->send(new CompleteDealSenderEmail($imagepathlink,$request->email_message));
+                    $response_flag = 1;
+                    $error='';
+                
+            
+
+            //return response()->json(['success' => $response_flag,'error'=> $error]);
+
+
+            $proposal = Proposals::firstOrNew(array('institute_id' => $instid->institute_id));
+
+            $proposal->generate_bill= $pdflink;
+            $proposal->pay_amount= $request->pay_amount;
+            $proposal->payment_date=  date('Y-m-d',strtotime($request->payment_date));
+            $proposal->payment_mode= $request->payment_mode;
+            $proposal->payment_subject= $request->subject;
+            $proposal->bill_email_cc= $request->email_cc;
+            $proposal->transaction_no= $data['transaction_no'];
+            $proposal->is_bill_generated= 1;
+            $proposal->proposal_message_body= $request->email_message;
+           
+
+                $proposal->save();
+
+
+                \LogActivity::addToLog('Proposal sent successfully');
+            return Redirect::back()->with('success','Proposal sent successfully');
+
+             
+            
+            }
+
+
+        } catch (\Exception $exception) {
+            $response_flag = 2;
+            $error = $exception->getMessage();
+        
+            \LogActivity::addToLog('Emial not sent due to server problem');
+            return Redirect::back()->with('error','Opps! something error ! please try after some times later'.$error);
+        
+        
+        }
+
+
+
+
+        }else{
+
+            
+            \LogActivity::addToLog('Pdf generation error occurred');
+            return Redirect::back()->with('error','Opps! something error ! please try after some times later');
+    
+        }
+
+
+    }
+
+    public function generateBillPdf(Request $request){
+
+        
+        // Create an instance of Dompdf
+        $dompdf = new Dompdf();
+
+        $proposal_id = $request->proposal_id;
+
+        //get institute name = 
+
+        $instid  =DB::table('proposals')->where('id',$proposal_id)->first() ;
+
+        $instname = DB::table('call_registers')->where('id',$instid->institute_id)->first();
+
+
+        $data['institute_name'] = $instname->organization_name;
+        $data['amout_paid'] = $request->pay_amount;
+        $data['amount_paid_text'] = Helpers::convert_number_to_words($request->pay_amount);
+        $data['tranaction_date'] = date('d.m.Y',strtotime($request->payment_date));
+        $data['transaction_no'] = str_replace(" ","-",$request->payment_mode)."-".$request->transaction_no ;
+        $data['Reg_txt'] = $request->subject;
+        $data['amnttct'] = $request->pay_amount;
+        $data['inv_no']= date('My')."/000".$proposal_id;
+
+
+        
+        //exit;
+        // Get HTML content from Blade views for each page
+        $page1 = View::make('backend.bills.page1', $data)->render();
+       
+        // Combine HTML content of all pages
+        $html = "<html><body>{$page1}</body></html>";
+        //$html = "<html><body>{$page5}</body></html>";
+        // Load combined HTML content into Dompdf
+        $dompdf->loadHtml($html);
+
+        // Set paper size and orientation for the PDF
+        $dompdf->setPaper('A3', 'portrait'); // Adjust paper size and orientation as needed
+        //A3: 'A3' - 297 x 420 mm or 11.7 x 16.5 inches
+        //A4: 'A4' - 210 x 297 mm or 8.3 x 11.7 inches
+        //A5: 'A5' - 148 x 210 mm or 5.8 x 8.3 inches
+        //Letter: 'letter' or '8.5x11' - 8.5 x 11 inches
+        //Legal: 'legal' or '8.5x14' - 8.5 x 14 inches
+        //Tabloid: 'tabloid' or '11x17' - 11 x 17 inches
+
+        // (Optional) Set options if needed
+        $options = new Options();
+      $options->set('isRemoteEnabled', true);
+	   $options->set('isHtml5ParserEnabled', true);
+        $dompdf->setOptions($options);
+
+        // Render the PDF
+        $dompdf->render();
+
+        // Get the generated PDF content
+        $pdfContent = $dompdf->output();
+
+        // Return the PDF content in the response with appropriate headers
+
+        // $proposal_file_name = strtoupper($data['institute_name'])."-".date('M-Y')."-BILLS-CREATED-BY-".auth()->user()->name.date('d-m-Y').".pdf";
+        $proposal_file_name = "Test-INST-".date('M-Y')."-BILLS-CREATED-BY-".auth()->user()->name.date('d-m-Y').".pdf";
+
+        $linkk = Storage::put("public/bills/".$proposal_file_name,$pdfContent);
+        //$filename =Storage::files('public/proposal/multi_page_pdf.pdf');
+        if($linkk == true){
+
+            $status = 1;
+            $pdflink = env('APP_URL').'/storage/app/public/bills/'.$proposal_file_name;
+        }else{
+
+            $status = 0;
+            $pdflink = "";
+
+        }
+
+
+        return response()->json(['success'=>1,'pdf_link'=>$pdflink]);
+
+
     }
 }

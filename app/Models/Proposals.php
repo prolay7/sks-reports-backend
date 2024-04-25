@@ -9,7 +9,7 @@ class Proposals extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_id','payment_id','product_total_cost'];
+    protected $fillable = ['institute_id'];
 
     
 }
