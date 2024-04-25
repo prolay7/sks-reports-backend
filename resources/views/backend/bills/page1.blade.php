@@ -69,7 +69,7 @@
 
 
 <!--------------------- SECOND PAGE ------------------------->
-<div style="position:absolute;top:835px;right:80px;font-size:20px;text-alignment:justify;">
+<!--<div style="position:absolute;top:835px;right:80px;font-size:20px;text-alignment:justify;">
   <p>
     <strong>{{$inv_no}}</strong>
   </p>
@@ -118,7 +118,7 @@
   <p style="font-size:28px;">
     <strong style="color:#000">{{$amnttct}}</strong>
   </p>
-</div>
+</div>-->
 
 
 
