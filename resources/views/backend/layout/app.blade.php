@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="{{asset('assets/assets/css/style.css')}}">
 	<link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
+    <link href="https://cdn.datatables.net/2.0.7/css/dataTables.bootstrap5.css" rel="stylesheet" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Toastr -->
     <link rel="stylesheet" href="{{ asset('assets/backend/vendor/toastr/css/toastr.min.css') }}">
@@ -66,6 +68,8 @@
     <!-- All init script -->
     <script src="{{ asset('assets/backend/js/plugins-init/toastr-init.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.7/js/dataTables.bootstrap5.js"></script>
 
 	<script src="{{asset('assets/assets/js/main.js')}}"></script>
 		
@@ -86,6 +90,9 @@
 <script type="text/javascript">
     $('#appointment_time').timepicker();
     $('.js-example-basic-single').select2();
+    $('#example').DataTable({
+            
+        });
 </script>
 
 <script>

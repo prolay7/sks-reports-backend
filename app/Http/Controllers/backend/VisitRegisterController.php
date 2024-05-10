@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\backend;
 
 use App\Models\VisitRegister;
+use App\Models\VisitRegisterFollowups;
 use DB;
 use App\Models\visitor;
 use Illuminate\View\View;
@@ -270,6 +271,51 @@ class VisitRegisterController extends Controller
         return response()->json(['success'=>$status,'data'=>$opt]);
 
 
+
+    }
+
+    public function updateStatus(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'date' => 'required',
+            'status' => 'required',
+            'remarks' => 'required',
+            
+             ]);
+            if ($validator->fails())
+            {
+                \LogActivity::addToLog('Validation Error occurred.'.json_encode($validator));
+                return Redirect::back()->withInput()->withErrors($validator);
+            } 
+           
+
+          
+
+        $call_register = VisitRegisterFollowups::firstOrNew(array('remarks' => $request->remarks,'visit_id'=>$request->visit_id,'status'=>$request->status,'followup_date'=>date('Y-m-d', strtotime($request->date))));
+        $call_register->remarks =$request->remarks;
+        $call_register->visit_id  = $request->visit_id;
+        $call_register->status = $request->status;
+        $call_register->agent_id = auth()->user()->id;
+        $call_register->followup_date = date('Y-m-d', strtotime($request->date));
+        $call_register->save();
+        
+        \LogActivity::addToLog('successfully Inserted data to Follow up Tables.Data inserted-'.json_encode($call_register));
+
+
+        //update call register main table 
+
+        $call_register2 = VisitRegister::find($request->visit_id);
+        $call_register2->visit_status = $request->status;
+        $call_register2->save();
+        
+         \LogActivity::addToLog('successfully Updated Status on Call Register');
+
+        
+
+        return redirect()->route('visit-register.list')
+                        ->with('success','Visit Register Information updated successfully.');
+             
+    
 
     }
 }

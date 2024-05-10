@@ -355,7 +355,69 @@
 			<td>{{$lisst->mobile_1}}</td>
 			<td>{{$lisst->mobile_2}}</td>
 			<td>{{$lisst->institution_address}}</td>
-			<td>{{$lisst->special_note}}</td>
+			<td>{{$lisst->special_note}}
+				@php($followups = DB::table('visit_register_followups')->where('visit_id',$lisst->id)->get())
+				@if(isset($followups) && !empty($followups))
+
+				
+				<a href="javascript:void(0)" class="openFollowupModal" data-bs-toggle="modal" data-bs-target="#leadModal_<?php echo $sll; ?>"><img src="{{asset('assets/assets/img/shield.png')}}" alt=""></a>
+                              <div class="modal" id="leadModal_<?php echo $sll; ?>">
+                                <div class="modal-dialog">
+                                  <div class="modal-content">
+                              
+                                    <!-- Modal Header -->
+                                    <div class="modal-header">
+										<strong><h3>Followup remarks of {{ $orggt->organization_name}} </h3></strong>
+									
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                              
+                                    <!-- Modal body -->
+                                    <div class="modal-body">
+                                      <div class="table-responsive">
+                                        <table class="table table-bordered tableDark">
+                                          <thead>
+                                          <tr>
+                                            <th scope="col">SL No</th>
+                                            <th scope="col">Follow up Date</th>
+                                            <th scope="col">Follow up status</th>
+                                            <th scope="col">Follow up Note</th>
+                                    
+                                          </tr>
+                                          </thead>
+                                          <tbody>
+                                            <?php if(count($followups)>0){  $sllw = 1;?>
+                                              @foreach($followups as $liostt)
+                                                <tr>
+                                                    <td>{{$sllw}}</td>
+                                                    <td>{{$liostt->followup_date}}</td>
+                                                    <td>{{$liostt->status}}</td>
+                                                    <td>{{$liostt->remarks}}</td>
+                                                   
+
+                                                </tr>
+                                                <?php $sllw++; ?>
+                                              @endforeach
+
+                                            <?php  }else{ ?>
+                                            <tr><td colspan="4">No Data Found</td></tr>
+
+                                            <?php } ?>
+                                          
+                                          </tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+                              
+                                    <!-- Modal footer -->
+                                    
+                              
+                                  </div>
+                                </div>
+                              </div>
+
+				@endif
+			</td>
 			<td>
 			    
 			    @if($lisst->visit_status == 'Positive Meeting' || $lisst->visit_status == 'Appointment Booked')
@@ -380,6 +442,120 @@
 			    
 				
 				<a href="{{route('details-visit-report',base64_encode($lisst->id))}}" class="green-btn my-1">View Report</a> 
+
+				<br>
+				<a href="#" class="deepGreen-btn-radius" data-bs-toggle="modal" data-bs-target="#myModal_<?php echo $sll; ?>" data-bs-backdrop="static" data-bs-keyboard="false">Action</a>
+                    
+                      <div class="modal" id="myModal_<?php echo $sll; ?>">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                      
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                              <h4 class="modal-title"><img src="{{asset('assets/assets/img/sikshapedia.png')}}" style="width:50%"></h4>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                      
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <div class="row">
+
+                                    <div class="col-md-12">
+										<strong><h3>Update remarks of {{ $orggt->organization_name}} </h3></strong>
+										<hr>
+										<br>
+                                        @include('backend.flash-message.flash-message')	
+                                        @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                            <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                                            <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                            </ul>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                                <form action="{{ route('visit-register.updatestatus')}}" method="post" class="needs-validation @if ($errors->any()) was-validated @endif" novalidate>
+                                @csrf
+
+                                <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group pb-3">
+                                                <div class="d-flex justify-content-between mb-2" >
+                                                    <label for="forl-label">Date</label>
+                                                    <div class="text-danger asterik text-end mb-0 pb-0">*</div>
+                                                </div>
+                                            <input type="hidden" name="visit_id"  value="{{$lisst->id}}"/>
+                                            <input class="form-control round-input"
+                                            type="date" name="date" min="{{ date('d-m-Y')}}"   class="form-control" id="contact_person_mobile2" placeholder="Contact person mobile"  value="{{ old('date') }}" required="required" />
+                                            
+                                            <div class="invalid-feedback">
+                                                Please enter date
+                                            </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group pb-3">
+                                                <div class="d-flex justify-content-between mb-2" >
+                                                    <label for="forl-label">Select Status</label>
+                                                    <div class="text-danger asterik text-end mb-0 pb-0">*</div>
+                                                </div>
+
+                                                <select class="form-control round-input" name="status" required="required">
+                                                    <option value="">Select Status</option>
+                                                    <option value="Appointment Registered">Appointment Registered</option>
+                                                    <option value="Positive Meeting">Positive Meeting</option>
+                                                    <option value="Very Interested">Very Interested</option>
+                                                    <option value="Appointment Registered">Interested But Not Sure</option>
+                                                    <option value="Asked to Visit Again">Asked to Visit Again</option>
+                                                    <option value="Not Interested">Not Interested</option>
+                                                    <option value="Next Followup">Next Followup</option>
+                                                    <option value="Long time Ph. not Received">Long time Ph. not Received</option>
+                                                    <option value="Appointment Booked">Appointment Booked</option>
+                                                    <option value="Visited">Visited</option>
+                                                    <option value="Re-Visit">Re-Visit</option>
+                                                         
+                                                    
+                                                </select>
+                                            
+                                            <div class="invalid-feedback">
+                                                Please enter status
+                                            </div>
+                                            </div>
+                                        </div>
+
+
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group pb-3">
+                                            <div class="d-flex justify-content-between mb-2" >
+                                                <label for="forl-label">Note</label>
+                                                <div class="text-danger asterik text-end mb-0 pb-0">*</div>
+                                            </div>
+                                        <textarea class="form-control round-input" name="remarks" placeholder="please enter note" rows="5" cols="10" required="required"></textarea>
+                                        <div class="invalid-feedback">
+                                            Please enter remarks
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                             
+                            </div>
+                      
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-primary menu"  style="float:left;">Submit</button>
+                            </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
 				
 			</td>
 		 </tr>

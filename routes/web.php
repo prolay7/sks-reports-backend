@@ -133,6 +133,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
 
         Route::post('/send-complete-deal', [ProposalController::class, 'sendCompleteDeal'])->name('send-complete-deal');
 
+        Route::post('/updatestatus', [VisitRegisterController::class, 'updateStatus'])->name('visit-register.updatestatus');
+
+
 
     });
 
